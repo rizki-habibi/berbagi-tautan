@@ -1,63 +1,70 @@
 <?php
 
 /**
- * Entry point Vercel PHP Serverless Runtime untuk Laravel
+ * Entry point Vercel PHP Serverless — Laravel 13
  * Runtime: vercel-php@0.7.4 (PHP 8.3 / Node 22)
  */
 
-// Tolak PHP < 8.1 — Laravel 13 butuh minimal PHP 8.2
-if (PHP_MAJOR_VERSION < 8 || (PHP_MAJOR_VERSION === 8 && PHP_MINOR_VERSION < 2)) {
-    http_response_code(500);
-    header('Content-Type: text/plain');
-    echo 'Error: PHP ' . PHP_VERSION . ' tidak didukung. Laravel 13 butuh PHP 8.2+';
-    exit(1);
-}
+define('LARAVEL_START', microtime(true));
 
-// Root folder proyek (satu level di atas /api)
 $rootPath   = dirname(__DIR__);
 $publicPath = $rootPath . '/public';
 
-// Setup $_SERVER agar Laravel bisa resolve path dengan benar
-$_SERVER['DOCUMENT_ROOT']   = $publicPath;
-$_SERVER['SCRIPT_FILENAME'] = $publicPath . '/index.php';
-$_SERVER['SCRIPT_NAME']     = '/index.php';
-
-// Pastikan storage/framework tersedia di /tmp (Vercel read-only FS)
-$tmpDirs = [
+// ── 1. Buat semua direktori yang dibutuhkan Laravel di /tmp ──────────────────
+$dirs = [
+    '/tmp/storage/app/public',
     '/tmp/storage/framework/views',
     '/tmp/storage/framework/cache/data',
     '/tmp/storage/framework/sessions',
     '/tmp/storage/logs',
     '/tmp/bootstrap/cache',
 ];
-foreach ($tmpDirs as $dir) {
+foreach ($dirs as $dir) {
     if (!is_dir($dir)) {
         mkdir($dir, 0755, true);
     }
 }
 
-// Override path storage Laravel ke /tmp
-$_ENV['APP_STORAGE']             = '/tmp/storage';
-$_SERVER['APP_STORAGE']          = '/tmp/storage';
-
-// Inisialisasi database SQLite kosong jika belum ada
-$sqliteDb = '/tmp/database.sqlite';
-if (!file_exists($sqliteDb)) {
-    touch($sqliteDb);
+// ── 2. Inisialisasi SQLite kosong di /tmp ─────────────────────────────────────
+if (!file_exists('/tmp/database.sqlite')) {
+    file_put_contents('/tmp/database.sqlite', '');
 }
 
-// Serve file statis dari public/ langsung (favicon, robots, dll)
-$uri      = $_SERVER['REQUEST_URI'] ?? '/';
-$uriPath  = parse_url($uri, PHP_URL_PATH);
-$filePath = $publicPath . $uriPath;
-
-if (
-    $uriPath !== '/'
-    && file_exists($filePath)
-    && !is_dir($filePath)
-) {
-    return false; // Biarkan web server serve file statis
+// ── 3. Symlink storage/ → /tmp/storage (supaya Laravel pakai /tmp) ───────────
+$storageLink = $rootPath . '/storage';
+if (!is_link($storageLink) && is_dir($storageLink)) {
+    // Salin isi storage yang perlu ke /tmp dulu jika ada
+    // Lalu buat symlink
+    rename($storageLink, $rootPath . '/storage_original');
+    symlink('/tmp/storage', $storageLink);
+} elseif (!file_exists($storageLink)) {
+    symlink('/tmp/storage', $storageLink);
 }
 
-// Boot Laravel
+// ── 4. Symlink bootstrap/cache/ → /tmp/bootstrap/cache ───────────────────────
+$bootstrapCache = $rootPath . '/bootstrap/cache';
+if (!is_link($bootstrapCache) && is_dir($bootstrapCache)) {
+    // Hapus isi cache lama (tidak perlu di serverless)
+    array_map('unlink', glob($bootstrapCache . '/*'));
+    rmdir($bootstrapCache);
+    symlink('/tmp/bootstrap/cache', $bootstrapCache);
+} elseif (!file_exists($bootstrapCache)) {
+    symlink('/tmp/bootstrap/cache', $bootstrapCache);
+}
+
+// ── 5. Setup $_SERVER untuk Laravel ─────────────────────────────────────────
+$_SERVER['DOCUMENT_ROOT']   = $publicPath;
+$_SERVER['SCRIPT_FILENAME'] = $publicPath . '/index.php';
+$_SERVER['SCRIPT_NAME']     = '/index.php';
+
+// ── 6. Serve file statis dari public/ langsung ───────────────────────────────
+$uri     = $_SERVER['REQUEST_URI'] ?? '/';
+$uriPath = parse_url($uri, PHP_URL_PATH);
+$static  = $publicPath . $uriPath;
+
+if ($uriPath !== '/' && file_exists($static) && !is_dir($static)) {
+    return false;
+}
+
+// ── 7. Boot Laravel ───────────────────────────────────────────────────────────
 require $publicPath . '/index.php';
