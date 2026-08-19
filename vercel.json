@@ -12,11 +12,11 @@
             "dest": "/public/build/$1"
         },
         {
-            "src": "/favicon.ico",
+            "src": "/favicon\\.ico",
             "dest": "/public/favicon.ico"
         },
         {
-            "src": "/robots.txt",
+            "src": "/robots\\.txt",
             "dest": "/public/robots.txt"
         },
         {
