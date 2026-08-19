@@ -15,6 +15,22 @@ class ProfilController extends Controller
         return view('profil.tampilkan', compact('links'));
     }
 
+    // Halaman berbagi per link berdasarkan slug
+    public function halamanBerbagi(string $slug)
+    {
+        $link = Link::where('slug', $slug)
+            ->where('aktif', true)
+            ->firstOrFail();
+
+        // Ambil beberapa link lain yang aktif sebagai saran (maks 4, kecuali link ini)
+        $linkLain = Link::aktif()
+            ->where('id', '!=', $link->id)
+            ->limit(4)
+            ->get();
+
+        return view('profil.berbagi', compact('link', 'linkLain'));
+    }
+
     // Redirect + catat klik
     public function klik(Request $request, Link $link)
     {
@@ -29,13 +45,13 @@ class ProfilController extends Controller
         $os        = $this->deteksiOS($userAgent);
 
         LinkClick::create([
-            'link_id'       => $link->id,
-            'ip_address'    => $request->ip(),
-            'user_agent'    => $userAgent,
-            'perangkat'     => $perangkat,
-            'browser'       => $browser,
-            'sistem_operasi'=> $os,
-            'referer'       => $request->header('referer'),
+            'link_id'        => $link->id,
+            'ip_address'     => $request->ip(),
+            'user_agent'     => $userAgent,
+            'perangkat'      => $perangkat,
+            'browser'        => $browser,
+            'sistem_operasi' => $os,
+            'referer'        => $request->header('referer'),
         ]);
 
         return redirect()->away($link->url);
@@ -50,11 +66,11 @@ class ProfilController extends Controller
 
     private function deteksiBrowser(string $ua): string
     {
-        if (str_contains($ua, 'Edg'))    return 'Edge';
-        if (str_contains($ua, 'Chrome')) return 'Chrome';
-        if (str_contains($ua, 'Firefox'))return 'Firefox';
-        if (str_contains($ua, 'Safari')) return 'Safari';
-        if (str_contains($ua, 'Opera'))  return 'Opera';
+        if (str_contains($ua, 'Edg'))     return 'Edge';
+        if (str_contains($ua, 'Chrome'))  return 'Chrome';
+        if (str_contains($ua, 'Firefox')) return 'Firefox';
+        if (str_contains($ua, 'Safari'))  return 'Safari';
+        if (str_contains($ua, 'Opera'))   return 'Opera';
         return 'Lainnya';
     }
 

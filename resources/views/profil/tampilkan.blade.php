@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BerbagiTautan — Link Saya</title>
+    <title>Rizki Habibi — BerbagiTautan</title>
+    <meta name="description" content="Semua link Rizki Habibi ada di sini — portofolio, sosial media, marketplace, dan lainnya.">
+    <meta property="og:title"       content="Rizki Habibi — BerbagiTautan">
+    <meta property="og:description" content="Semua link Rizki Habibi ada di sini.">
+    <meta property="og:image"       content="https://rizki-habibi-portofolio.vercel.app/og-image.png">
+    <meta property="og:url"         content="{{ url('/') }}">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
     <style>
         /* ══════════════════════════════════════════
@@ -309,6 +314,119 @@
         }
 
         /* ══════════════════════════════════════════
+           TOMBOL SHARE PER CARD
+        ══════════════════════════════════════════ */
+        .link-item-wrap { position: relative; }
+
+        .tombol-share {
+            position: absolute;
+            right: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            background: #FFE600;
+            border: 3px solid #1A1A2E;
+            border-radius: 50%;
+            width: 34px; height: 34px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem;
+            box-shadow: 3px 3px 0 #1A1A2E;
+            text-decoration: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 10;
+        }
+        .link-item-wrap:hover .tombol-share,
+        .tombol-share:focus {
+            opacity: 1;
+            transform: translateY(-50%) translateX(6px);
+        }
+        .tombol-share:hover {
+            background: #1A1A2E;
+            color: #FFE600;
+        }
+
+        /* ══════════════════════════════════════════
+           PORTOFOLIO BANNER
+        ══════════════════════════════════════════ */
+        .banner-porto {
+            background: linear-gradient(135deg, #1A1A2E, #16213E);
+            border: 4px solid #FFE600;
+            border-radius: 18px;
+            box-shadow: 7px 7px 0 #FFE600;
+            padding: 18px 22px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .banner-porto:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 10px 10px 0 #FFE600;
+        }
+        .banner-porto-ikon { font-size: 2.5rem; }
+        .banner-porto-nama {
+            font-family: 'Bangers', cursive;
+            font-size: 1.15rem;
+            letter-spacing: 2px;
+            color: #FFE600;
+        }
+        .banner-porto-sub {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.6);
+            font-weight: 700;
+            display: block;
+            margin-top: 2px;
+        }
+        .banner-porto-badge {
+            margin-left: auto;
+            background: #FFE600;
+            color: #1A1A2E;
+            font-family: 'Bangers', cursive;
+            font-size: 0.72rem;
+            letter-spacing: 1px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            border: 2px solid #1A1A2E;
+            white-space: nowrap;
+            animation: wobble 2s ease-in-out infinite;
+        }
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-4deg); }
+            50%       { transform: rotate(4deg); }
+        }
+
+        /* ══════════════════════════════════════════
+           SOSIAL MEDIA IKON BARIS (HEADER)
+        ══════════════════════════════════════════ */
+        .sosmed-baris {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+        .sosmed-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            border: 3px solid #1A1A2E;
+            box-shadow: 3px 3px 0 #1A1A2E;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: 0.78rem;
+            text-decoration: none;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+        .sosmed-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0 #1A1A2E;
+        }
+
+        /* ══════════════════════════════════════════
            EFEK PARTIKEL KLIK
         ══════════════════════════════════════════ */
         .partikel {
@@ -444,11 +562,45 @@
     <div class="profil-header">
         <div class="avatar-wrap">
             <div class="pulse-ring"></div>
-            <div class="avatar-img">💥</div>
-            <span class="avatar-badge">KEREN!</span>
+            <div class="avatar-img">👨‍💻</div>
+            <span class="avatar-badge">OPEN!</span>
         </div>
-        <h1 class="profil-nama">BerbagiTautan</h1>
-        <p class="profil-bio">✨ Semua linkku ada di sini, bro!</p>
+        <h1 class="profil-nama">Rizki Habibi</h1>
+        <p class="profil-bio">💻 Developer · Creator · Maker</p>
+
+        {{-- Sosial Media Ikon Baris --}}
+        <div class="sosmed-baris">
+            <a href="https://github.com/rizki-habibi"
+               target="_blank" rel="noopener"
+               class="sosmed-btn"
+               style="background:#1A1A2E; color:#fff;">
+                🐙 GitHub
+            </a>
+            <a href="https://www.youtube.com/@26_rizkihabibi73"
+               target="_blank" rel="noopener"
+               class="sosmed-btn"
+               style="background:#FF0000; color:#fff;">
+                ▶ YouTube
+            </a>
+            <a href="https://rizki-habibi-portofolio.vercel.app"
+               target="_blank" rel="noopener"
+               class="sosmed-btn"
+               style="background:#FFE600; color:#1A1A2E;">
+                🌐 Portofolio
+            </a>
+        </div>
+    </div>
+
+    {{-- Banner Portofolio --}}
+    <div class="reveal">
+        <a href="https://rizki-habibi-portofolio.vercel.app" target="_blank" rel="noopener" class="banner-porto">
+            <span class="banner-porto-ikon">🚀</span>
+            <div>
+                <div class="banner-porto-nama">PORTOFOLIO RIZKI</div>
+                <span class="banner-porto-sub">rizki-habibi-portofolio.vercel.app</span>
+            </div>
+            <span class="banner-porto-badge">LIHAT →</span>
+        </a>
     </div>
 
     @if($links->isEmpty())
@@ -504,7 +656,7 @@
                                         default                                 => parse_url($link->url, PHP_URL_HOST) ?? $link->url,
                                     };
                                 @endphp
-                                <div class="link-item" style="animation-delay: {{ $delay }}ms;">
+                                <div class="link-item link-item-wrap" style="animation-delay: {{ $delay }}ms;">
                                     <a href="{{ route('link.klik', $link) }}"
                                        class="link-btn"
                                        style="background:{{ $link->warna_bg }}; color:{{ $link->warna_teks }};"
@@ -519,6 +671,14 @@
 
                                         <span class="link-klik-badge">→</span>
                                     </a>
+                                    {{-- Tombol share per card --}}
+                                    @if($link->slug)
+                                    <a href="{{ route('link.berbagi', $link->slug) }}"
+                                       class="tombol-share"
+                                       title="Bagikan {{ $link->judul }}">
+                                        📤
+                                    </a>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>

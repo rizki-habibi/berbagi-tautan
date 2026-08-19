@@ -42,6 +42,46 @@
                     @error('url') <div class="invalid-feedback fw-bold">{{ $message }}</div> @enderror
                 </div>
 
+                {{-- Slug --}}
+                <div class="mb-3">
+                    <label class="form-label fw-bold" style="text-transform:uppercase; letter-spacing:0.5px; font-size:0.85rem;">
+                        🏷️ Slug Halaman Berbagi
+                        <span class="text-muted fw-normal" style="font-size:0.78rem;">(kosongkan = otomatis dari judul)</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text fw-bold"
+                              style="border:3px solid #1A1A2E; border-right:none; border-radius:10px 0 0 10px; background:#f8f9fa; font-size:0.8rem;">
+                            /berbagi/
+                        </span>
+                        <input type="text" name="slug" id="slugInput"
+                            class="form-control @error('slug') is-invalid @enderror"
+                            value="{{ old('slug') }}"
+                            placeholder="lazada-murah"
+                            style="border:3px solid #1A1A2E; border-radius:0 10px 10px 0; font-weight:700;">
+                        @error('slug') <div class="invalid-feedback fw-bold">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="mt-1" id="slugPreviewWrap" style="display:none;">
+                        <small class="text-muted fw-bold">
+                            🔗 URL berbagi: <span id="slugPreviewTeks" class="text-primary"></span>
+                        </small>
+                    </div>
+                </div>
+
+                {{-- Deskripsi --}}
+                <div class="mb-3">
+                    <label class="form-label fw-bold" style="text-transform:uppercase; letter-spacing:0.5px; font-size:0.85rem;">
+                        📄 Deskripsi
+                        <span class="text-muted fw-normal" style="font-size:0.78rem;">(opsional, muncul di halaman berbagi & WhatsApp preview)</span>
+                    </label>
+                    <textarea name="deskripsi" rows="2"
+                        class="form-control @error('deskripsi') is-invalid @enderror"
+                        placeholder="cth: Temukan produk murah dan promo terbaru di Lazada!"
+                        maxlength="500"
+                        style="border:3px solid #1A1A2E; border-radius:10px; box-shadow:3px 3px 0 #1A1A2E; font-weight:700; resize:vertical;">{{ old('deskripsi') }}</textarea>
+                    @error('deskripsi') <div class="invalid-feedback fw-bold">{{ $message }}</div> @enderror
+                    <small class="text-muted fw-bold">Maks 500 karakter</small>
+                </div>
+
                 <div class="row g-3 mb-3">
                     <div class="col-4">
                         <label class="form-label fw-bold" style="text-transform:uppercase; letter-spacing:0.5px; font-size:0.85rem;">
@@ -136,12 +176,23 @@
 @push('scripts')
 <script>
 const judulInput   = document.querySelector('[name=judul]');
+const slugInput    = document.getElementById('slugInput');
 const warnaInput   = document.querySelector('[name=warna_bg]');
 const teksInput    = document.querySelector('[name=warna_teks]');
 const ikonInput    = document.querySelector('[name=ikon]');
 const previewBtn   = document.getElementById('preview-btn');
 const previewJudul = document.getElementById('preview-judul');
 const previewIkon  = document.getElementById('preview-ikon');
+const slugPreviewWrap = document.getElementById('slugPreviewWrap');
+const slugPreviewTeks = document.getElementById('slugPreviewTeks');
+const baseUrl = '{{ url('/berbagi') }}/';
+
+function buatSlug(str) {
+    return str.toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
 
 function updatePreview() {
     previewBtn.style.background = warnaInput.value;
@@ -150,6 +201,30 @@ function updatePreview() {
     previewIkon.textContent     = ikonInput.value || '🔗';
 }
 
-[judulInput, warnaInput, teksInput, ikonInput].forEach(el => el.addEventListener('input', updatePreview));
+// Auto-isi slug dari judul jika slug masih kosong
+judulInput.addEventListener('input', function() {
+    updatePreview();
+    if (!slugInput.value.trim()) {
+        const otomatis = buatSlug(judulInput.value);
+        slugPreviewTeks.textContent = baseUrl + (otomatis || '...');
+        slugPreviewWrap.style.display = otomatis ? 'block' : 'none';
+    }
+});
+
+// Update preview URL saat slug diketik manual
+slugInput.addEventListener('input', function() {
+    const val = slugInput.value.trim();
+    if (val) {
+        slugPreviewTeks.textContent = baseUrl + val;
+        slugPreviewWrap.style.display = 'block';
+    } else {
+        // fallback ke slug dari judul
+        const otomatis = buatSlug(judulInput.value);
+        slugPreviewTeks.textContent = baseUrl + (otomatis || '...');
+        slugPreviewWrap.style.display = otomatis ? 'block' : 'none';
+    }
+});
+
+[warnaInput, teksInput, ikonInput].forEach(el => el.addEventListener('input', updatePreview));
 </script>
 @endpush

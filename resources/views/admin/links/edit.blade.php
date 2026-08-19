@@ -41,6 +41,59 @@
                     @error('url') <div class="invalid-feedback fw-bold">{{ $message }}</div> @enderror
                 </div>
 
+                {{-- Slug --}}
+                <div class="mb-3">
+                    <label class="form-label fw-bold" style="text-transform:uppercase; letter-spacing:0.5px; font-size:0.85rem;">
+                        🏷️ Slug Halaman Berbagi
+                        <span class="text-muted fw-normal" style="font-size:0.78rem;">(kosongkan = otomatis dari judul)</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text fw-bold"
+                              style="border:3px solid #1A1A2E; border-right:none; border-radius:10px 0 0 10px; background:#f8f9fa; font-size:0.8rem;">
+                            /berbagi/
+                        </span>
+                        <input type="text" name="slug" id="slugInput"
+                            class="form-control @error('slug') is-invalid @enderror"
+                            value="{{ old('slug', $link->slug) }}"
+                            style="border:3px solid #1A1A2E; border-radius:0 10px 10px 0; font-weight:700;">
+                        @error('slug') <div class="invalid-feedback fw-bold">{{ $message }}</div> @enderror
+                    </div>
+                    @if($link->slug)
+                    <div class="mt-1 d-flex align-items-center gap-2 flex-wrap">
+                        <small class="text-muted fw-bold">
+                            🔗 URL saat ini:
+                            <a href="{{ route('link.berbagi', $link->slug) }}" target="_blank" class="text-primary">
+                                {{ url('/berbagi/' . $link->slug) }}
+                            </a>
+                        </small>
+                        <button type="button" class="btn btn-sm py-0"
+                                style="border:2px solid #1A1A2E; border-radius:8px; font-size:0.72rem; font-weight:800; background:#FFE600;"
+                                onclick="salinURLBerbagi()">
+                            📋 Salin
+                        </button>
+                    </div>
+                    @endif
+                    <div class="mt-1" id="slugPreviewWrap" style="display:none;">
+                        <small class="fw-bold" style="color:#0057FF;">
+                            🔗 URL baru: <span id="slugPreviewTeks"></span>
+                        </small>
+                    </div>
+                </div>
+
+                {{-- Deskripsi --}}
+                <div class="mb-3">
+                    <label class="form-label fw-bold" style="text-transform:uppercase; letter-spacing:0.5px; font-size:0.85rem;">
+                        📄 Deskripsi
+                        <span class="text-muted fw-normal" style="font-size:0.78rem;">(opsional, muncul di halaman berbagi & WhatsApp preview)</span>
+                    </label>
+                    <textarea name="deskripsi" rows="2"
+                        class="form-control @error('deskripsi') is-invalid @enderror"
+                        maxlength="500"
+                        style="border:3px solid #1A1A2E; border-radius:10px; box-shadow:3px 3px 0 #1A1A2E; font-weight:700; resize:vertical;">{{ old('deskripsi', $link->deskripsi) }}</textarea>
+                    @error('deskripsi') <div class="invalid-feedback fw-bold">{{ $message }}</div> @enderror
+                    <small class="text-muted fw-bold">Maks 500 karakter</small>
+                </div>
+
                 <div class="row g-3 mb-3">
                     <div class="col-4">
                         <label class="form-label fw-bold" style="text-transform:uppercase; letter-spacing:0.5px; font-size:0.85rem;">
@@ -134,19 +187,57 @@
 
 @push('scripts')
 <script>
-const judulInput   = document.querySelector('[name=judul]');
-const warnaInput   = document.querySelector('[name=warna_bg]');
-const teksInput    = document.querySelector('[name=warna_teks]');
-const ikonInput    = document.querySelector('[name=ikon]');
-const previewBtn   = document.getElementById('preview-btn');
-const previewJudul = document.getElementById('preview-judul');
-const previewIkon  = document.getElementById('preview-ikon');
+const judulInput      = document.querySelector('[name=judul]');
+const slugInput       = document.getElementById('slugInput');
+const warnaInput      = document.querySelector('[name=warna_bg]');
+const teksInput       = document.querySelector('[name=warna_teks]');
+const ikonInput       = document.querySelector('[name=ikon]');
+const previewBtn      = document.getElementById('preview-btn');
+const previewJudul    = document.getElementById('preview-judul');
+const previewIkon     = document.getElementById('preview-ikon');
+const slugPreviewWrap = document.getElementById('slugPreviewWrap');
+const slugPreviewTeks = document.getElementById('slugPreviewTeks');
+const baseUrl         = '{{ url('/berbagi') }}/';
+
+function buatSlug(str) {
+    return str.toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
 
 function updatePreview() {
     previewBtn.style.background = warnaInput.value;
     previewBtn.style.color      = teksInput.value;
     previewJudul.textContent    = judulInput.value || 'Judul Link';
     previewIkon.textContent     = ikonInput.value || '🔗';
+}
+
+// Update preview URL slug saat diubah manual
+slugInput.addEventListener('input', function () {
+    const val = slugInput.value.trim();
+    const otomatis = buatSlug(judulInput.value);
+    if (val) {
+        slugPreviewTeks.textContent = baseUrl + val;
+        slugPreviewWrap.style.display = 'block';
+    } else if (otomatis) {
+        slugPreviewTeks.textContent = baseUrl + otomatis + ' (dari judul)';
+        slugPreviewWrap.style.display = 'block';
+    } else {
+        slugPreviewWrap.style.display = 'none';
+    }
+});
+
+function salinURLBerbagi() {
+    const url = slugInput.value.trim()
+        ? baseUrl + slugInput.value.trim()
+        : '{{ $link->slug ? url("/berbagi/" . $link->slug) : "" }}';
+    if (!url) return;
+    navigator.clipboard?.writeText(url).then(function() {
+        const btn = event.target;
+        btn.textContent = '✅ Tersalin!';
+        setTimeout(function() { btn.textContent = '📋 Salin'; }, 2000);
+    });
 }
 
 [judulInput, warnaInput, teksInput, ikonInput].forEach(el => el.addEventListener('input', updatePreview));

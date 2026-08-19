@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [ProfilController::class, 'tampilkan'])->name('profil');
 Route::get('/klik/{link}', [ProfilController::class, 'klik'])->name('link.klik');
 
+// Halaman berbagi per link (slug) — misal /berbagi/lazada-murah
+Route::get('/berbagi/{slug}', [ProfilController::class, 'halamanBerbagi'])->name('link.berbagi');
+
 // ─── Auth ────────────────────────────────────────────────────────────────────
 Route::get('/admin/login', [AuthController::class, 'tampilkanLogin'])->name('login');
 Route::post('/admin/login', [AuthController::class, 'login'])->name('login.post');
