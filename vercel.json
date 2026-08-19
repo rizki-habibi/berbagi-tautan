@@ -1,5 +1,0 @@
-{
-  "buildCommand": "npm install && npm run build",
-  "outputDirectory": "public/build",
-  "installCommand": "npm install"
-}
