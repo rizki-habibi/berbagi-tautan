@@ -1,0 +1,17 @@
+{
+  "framework": null,
+  "buildCommand": "composer install --no-dev --optimize-autoloader && php artisan config:cache && php artisan route:cache && php artisan view:cache && npm install && npm run build",
+  "outputDirectory": "public",
+  "installCommand": "echo 'Dependencies installed via buildCommand'",
+  "devCommand": "php artisan serve --host=0.0.0.0 --port=$PORT",
+  "routes": [
+    {
+      "src": "/build/(.*)",
+      "dest": "/build/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.php"
+    }
+  ]
+}
