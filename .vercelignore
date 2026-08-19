@@ -1,0 +1,23 @@
+# Dependensi development — tidak perlu di Vercel
+node_modules
+.git
+
+# Test dan tools dev
+tests
+phpunit.xml
+.editorconfig
+.eslintrc*
+
+# Log dan cache lokal
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/testing/*
+storage/framework/views/*
+
+# Database lokal (Vercel pakai /tmp/database.sqlite)
+database/database.sqlite
+
+# File CI/CD lain
+Procfile
+nixpacks.toml
