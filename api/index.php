@@ -11,8 +11,7 @@ error_reporting(E_ALL);
 $rootPath   = dirname(__DIR__);
 $publicPath = $rootPath . '/public';
 
-// ── Set env vars SEBELUM Laravel boot ──────────────────────────────────────
-// Ini memastikan semua config Laravel terbaca dengan benar di serverless
+// ── Set env vars SEBELUM Laravel boot ────────────────────────────────────────
 $envVars = [
     'VERCEL'                => '1',
     'APP_ENV'               => 'production',
@@ -35,7 +34,6 @@ $envVars = [
 ];
 
 foreach ($envVars as $key => $value) {
-    // Jangan override jika sudah di-set dari Vercel Dashboard
     if (getenv($key) === false) {
         putenv("$key=$value");
         $_ENV[$key]    = $value;
@@ -52,12 +50,12 @@ if (empty($appKey)) {
     exit(1);
 }
 
-// ── Setup $_SERVER ──────────────────────────────────────────────────────────
+// ── Setup $_SERVER ────────────────────────────────────────────────────────────
 $_SERVER['DOCUMENT_ROOT']   = $publicPath;
 $_SERVER['SCRIPT_FILENAME'] = $publicPath . '/index.php';
 $_SERVER['SCRIPT_NAME']     = '/index.php';
 
-// ── Buat direktori /tmp yang dibutuhkan Laravel ─────────────────────────────
+// ── Buat direktori /tmp ───────────────────────────────────────────────────────
 foreach ([
     '/tmp/storage/app/public',
     '/tmp/storage/framework/views',
@@ -69,17 +67,34 @@ foreach ([
     is_dir($dir) || mkdir($dir, 0755, true);
 }
 
-// SQLite kosong
-file_exists('/tmp/database.sqlite') || file_put_contents('/tmp/database.sqlite', '');
+// ── Copy SQLite dari repo ke /tmp jika belum ada atau tabel kosong ────────────
+// database/database.sqlite di-commit ke repo sudah ter-migrate + ter-seed
+$tmpDb   = '/tmp/database.sqlite';
+$repoDb  = $rootPath . '/database/database.sqlite';
+$needsCopy = true;
 
-// ── Serve file statis ───────────────────────────────────────────────────────
+if (file_exists($tmpDb) && filesize($tmpDb) > 0) {
+    try {
+        $pdo    = new PDO('sqlite:' . $tmpDb);
+        $tables = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name='links'")->fetchAll();
+        $needsCopy = empty($tables);
+    } catch (\Throwable $e) {
+        $needsCopy = true;
+    }
+}
+
+if ($needsCopy && file_exists($repoDb)) {
+    copy($repoDb, $tmpDb);
+}
+
+// ── Serve file statis ─────────────────────────────────────────────────────────
 $uriPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 $static  = $publicPath . $uriPath;
 if ($uriPath !== '/' && file_exists($static) && !is_dir($static)) {
     return false;
 }
 
-// ── Boot Laravel ────────────────────────────────────────────────────────────
+// ── Boot Laravel ──────────────────────────────────────────────────────────────
 try {
     require $publicPath . '/index.php';
 } catch (\Throwable $e) {
