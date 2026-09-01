@@ -1,13 +1,12 @@
 <?php
 
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\ApplicationBuilder;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 
-// ── Buat direktori /tmp yang dibutuhkan Laravel ───────────────────────────────
-// Di Vercel, filesystem read-only kecuali /tmp
-// Di lokal, /tmp juga bisa ditulis — aman untuk semua environment
+// ── Siapkan /tmp sebelum Laravel boot ────────────────────────────────────────
 foreach ([
     '/tmp/storage/app/public',
     '/tmp/storage/framework/views',
@@ -18,29 +17,35 @@ foreach ([
 ] as $dir) {
     is_dir($dir) || mkdir($dir, 0755, true);
 }
-
-// SQLite kosong jika belum ada
 file_exists('/tmp/database.sqlite') || file_put_contents('/tmp/database.sqlite', '');
 
-// ── Bootstrap Laravel dengan storage path ke /tmp ─────────────────────────────
-$app = Application::configure(basePath: dirname(__DIR__))
+// ── Buat Application instance dan set storage path SEBELUM service providers ──
+$basePath = dirname(__DIR__);
+$app = new Application(basePath: $basePath);
+
+// Override storage & bootstrap path ke /tmp — WAJIB sebelum create()
+// Ini memastikan MaintenanceModeManager cari file di /tmp bukan di /var/task/user/storage
+$app->useStoragePath('/tmp/storage');
+$app->useBootstrapPath('/tmp/bootstrap');
+
+// ── Configure via ApplicationBuilder dengan instance yang sudah di-setup ──────
+return (new ApplicationBuilder($app))
+    ->withKernels()
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: $basePath . '/routes/web.php',
+        commands: $basePath . '/routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Exclude PreventRequestsDuringMaintenance
+        // (maintenance mode tidak bisa di-set di Vercel serverless)
+        $middleware->remove([
+            \Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
-    })->create();
-
-// Override path storage dan bootstrap cache ke /tmp
-// Ini yang membuat Vercel bisa menulis (maintenance flag, views cache, dll)
-$app->useStoragePath('/tmp/storage');
-$app->useBootstrapPath('/tmp/bootstrap');
-
-return $app;
+    })
+    ->create();
