@@ -25,19 +25,21 @@
         }
     ],
     "env": {
+        "VERCEL": "1",
         "APP_NAME": "BerbagiTautan",
         "APP_ENV": "production",
         "APP_DEBUG": "true",
-        "APP_CONFIG_CACHE": "/tmp/config.php",
-        "APP_EVENTS_CACHE": "/tmp/events.php",
-        "APP_PACKAGES_CACHE": "/tmp/packages.php",
-        "APP_ROUTES_CACHE": "/tmp/routes.php",
-        "APP_SERVICES_CACHE": "/tmp/services.php",
-        "VIEW_COMPILED_PATH": "/tmp",
+        "APP_URL": "https://berbagi-tautan-rizki.vercel.app",
+        "VIEW_COMPILED_PATH": "/tmp/storage/framework/views",
         "CACHE_STORE": "array",
         "SESSION_DRIVER": "cookie",
+        "SESSION_SECURE_COOKIE": "true",
         "LOG_CHANNEL": "stderr",
+        "LOG_LEVEL": "error",
         "DB_CONNECTION": "sqlite",
-        "DB_DATABASE": "/tmp/database.sqlite"
+        "DB_DATABASE": "/tmp/database.sqlite",
+        "FILESYSTEM_DISK": "local",
+        "QUEUE_CONNECTION": "sync",
+        "BROADCAST_CONNECTION": "log"
     }
 }
