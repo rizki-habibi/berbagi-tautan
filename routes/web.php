@@ -24,4 +24,5 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
     Route::resource('links', LinkController::class);
     Route::patch('/links/{link}/toggle', [LinkController::class, 'toggleAktif'])->name('links.toggle');
+    Route::patch('/links/{link}/unggulan', [LinkController::class, 'toggleUnggulan'])->name('links.unggulan');
 });

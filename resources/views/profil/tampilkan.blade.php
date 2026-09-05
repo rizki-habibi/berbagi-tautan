@@ -232,6 +232,55 @@
         .reveal { opacity:0;transform:translateY(24px);transition:opacity 0.5s ease,transform 0.5s ease; }
         .reveal.tampil { opacity:1;transform:translateY(0); }
 
+        /* ══ LINK UNGGULAN ══ */
+        .unggulan-section {
+            margin-bottom: 20px;
+        }
+        .unggulan-judul {
+            font-family: 'Bangers', cursive;
+            font-size: 1rem; letter-spacing: 3px;
+            color: #1A1A2E;
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 12px;
+        }
+        .unggulan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .unggulan-card {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 8px; padding: 16px 12px;
+            border-radius: 16px;
+            border: 4px solid #1A1A2E;
+            box-shadow: 5px 5px 0 #1A1A2E;
+            text-decoration: none;
+            position: relative; overflow: hidden;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            text-align: center;
+        }
+        .unggulan-card:hover { transform: translate(-4px,-4px); box-shadow: 9px 9px 0 #1A1A2E; }
+        .unggulan-card:active { transform: translate(3px,3px); box-shadow: 2px 2px 0 #1A1A2E; }
+        .unggulan-card-ikon { font-size: 2.2rem; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.15)); }
+        .unggulan-card-judul { font-family: 'Bangers', cursive; font-size: 0.9rem; letter-spacing: 1.5px; font-weight: 900; line-height: 1.2; }
+        .unggulan-card-sub { font-size: 0.68rem; opacity: 0.7; font-weight: 700; }
+        /* Bintang badge unggulan */
+        .unggulan-badge {
+            position: absolute; top: 6px; right: 6px;
+            background: #FFE600; color: #1A1A2E;
+            font-size: 0.6rem; font-family: 'Bangers', cursive; letter-spacing: 1px;
+            padding: 1px 6px; border-radius: 10px;
+            border: 2px solid #1A1A2E;
+        }
+        /* Badge unggulan di list biasa */
+        .badge-unggulan {
+            font-size: 0.62rem; font-family: 'Bangers', cursive;
+            letter-spacing: 1px; background: #FFE600; color: #1A1A2E;
+            padding: 1px 7px; border-radius: 10px;
+            border: 1.5px solid rgba(0,0,0,0.3);
+            flex-shrink: 0;
+        }
+
         /* ══ PARTIKEL ══ */
         .partikel { position:fixed;pointer-events:none;z-index:99999;font-family:'Bangers',cursive;font-size:1.4rem;font-weight:900;letter-spacing:1px;animation:partikelTerbang 0.8s ease-out forwards; }
         @keyframes partikelTerbang { 0%{opacity:1;transform:translate(0,0) scale(1) rotate(0deg)} 100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0.3) rotate(var(--dr))} }
@@ -380,6 +429,39 @@
         </a>
     </div>
 
+    {{-- ══ SECTION LINK UNGGULAN ══ --}}
+    @if($unggulan->isNotEmpty())
+    <div class="reveal unggulan-section">
+        <div class="unggulan-judul">⭐ LINK UNGGULAN</div>
+        <div class="unggulan-grid">
+            @foreach($unggulan as $item)
+                @php
+                    $subUnggulan = match(true) {
+                        str_contains($item->url, 'instagram')  => 'Instagram',
+                        str_contains($item->url, 'youtube')    => 'YouTube',
+                        str_contains($item->url, 'github')     => 'GitHub',
+                        str_contains($item->url, 'lazada')     => 'Lazada',
+                        str_contains($item->url, 'shopee')     => 'Shopee',
+                        str_contains($item->url, 'tokopedia')  => 'Tokopedia',
+                        str_contains($item->url, 'fiverr')     => 'Fiverr',
+                        str_contains($item->url, 'vercel.app') => parse_url($item->url, PHP_URL_HOST),
+                        str_contains($item->url, 'trakteer')   => 'Trakteer',
+                        default => parse_url($item->url, PHP_URL_HOST) ?? '',
+                    };
+                @endphp
+                <a href="{{ route('link.klik', $item) }}"
+                   class="unggulan-card"
+                   style="background:{{ $item->warna_bg }};color:{{ $item->warna_teks }};">
+                    <span class="unggulan-badge">⭐ UNGGULAN</span>
+                    <span class="unggulan-card-ikon">{{ $item->ikon }}</span>
+                    <span class="unggulan-card-judul">{{ $item->judul }}</span>
+                    <span class="unggulan-card-sub">{{ $subUnggulan }}</span>
+                </a>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     @if($links->isEmpty())
         <div class="komik-box" style="text-align:center;padding:48px 20px;">
             <div style="font-family:'Bangers',cursive;font-size:2rem;color:#ccc;">😴 Belum ada link nih...</div>
@@ -448,7 +530,12 @@
 
                                             <span class="link-ikon">{{ $link->ikon }}</span>
                                             <span class="link-teks">
-                                                <span class="link-teks-utama">{{ $link->judul }}</span>
+                                                <span class="link-teks-utama">
+                                                    {{ $link->judul }}
+                                                    @if($link->unggulan)
+                                                    <span class="badge-unggulan">⭐</span>
+                                                    @endif
+                                                </span>
                                                 <span class="link-teks-sub">{{ $sublabel }}</span>
                                             </span>
 

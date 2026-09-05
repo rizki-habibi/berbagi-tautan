@@ -17,10 +17,12 @@ class Link extends Model
         'warna_teks',
         'urutan',
         'aktif',
+        'unggulan',
     ];
 
     protected $casts = [
-        'aktif' => 'boolean',
+        'aktif'     => 'boolean',
+        'unggulan'  => 'boolean',
     ];
 
     // ─── Auto-generate slug dari judul saat saving ───────────────────────────

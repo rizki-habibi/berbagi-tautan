@@ -45,6 +45,7 @@ class LinkSeeder extends Seeder
                 'warna_teks' => '#FFFFFF',
                 'urutan'     => 3,
                 'aktif'      => true,
+                'unggulan'   => true,
             ],
             [
                 'judul'      => 'Twitter / X',
@@ -161,6 +162,7 @@ class LinkSeeder extends Seeder
                 'warna_teks' => '#1A1A2E',
                 'urutan'     => 13,
                 'aktif'      => true,
+                'unggulan'   => true,
             ],
             [
                 'judul'      => 'LinkedIn',
@@ -183,6 +185,7 @@ class LinkSeeder extends Seeder
                 'warna_teks' => '#FFFFFF',
                 'urutan'     => 15,
                 'aktif'      => true,
+                'unggulan'   => true,
             ],
             [
                 'judul'      => 'Lazada — Profil Toko',

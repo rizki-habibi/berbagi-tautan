@@ -11,8 +11,9 @@ class ProfilController extends Controller
     // Halaman utama publik (mirip linktr.ee)
     public function tampilkan()
     {
-        $links = Link::aktif()->get();
-        return view('profil.tampilkan', compact('links'));
+        $links     = Link::aktif()->get();
+        $unggulan  = Link::aktif()->where('unggulan', true)->orderBy('urutan')->get();
+        return view('profil.tampilkan', compact('links', 'unggulan'));
     }
 
     // Halaman berbagi per link berdasarkan slug

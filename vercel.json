@@ -12,12 +12,24 @@
             "dest": "/public/build/$1"
         },
         {
+            "src": "/img-kiri\\.png",
+            "dest": "/public/img-kiri.png"
+        },
+        {
+            "src": "/img-kanan\\.png",
+            "dest": "/public/img-kanan.png"
+        },
+        {
             "src": "/favicon\\.ico",
             "dest": "/public/favicon.ico"
         },
         {
             "src": "/robots\\.txt",
             "dest": "/public/robots.txt"
+        },
+        {
+            "src": "/(.*\\.(png|jpg|jpeg|gif|svg|webp|ico|css|js|woff|woff2|ttf|eot|map))",
+            "dest": "/public/$1"
         },
         {
             "src": "/(.*)",

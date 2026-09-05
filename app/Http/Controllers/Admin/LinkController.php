@@ -33,6 +33,7 @@ class LinkController extends Controller
             'warna_teks' => 'required|string|max:7',
             'urutan'     => 'required|integer|min:0',
             'aktif'      => 'boolean',
+            'unggulan'   => 'boolean',
         ], [
             'judul.required'  => 'Judul link wajib diisi.',
             'url.required'    => 'URL wajib diisi.',
@@ -40,7 +41,8 @@ class LinkController extends Controller
             'slug.unique'     => 'Slug sudah digunakan, coba yang lain.',
         ]);
 
-        $data['aktif'] = $request->boolean('aktif');
+        $data['aktif']    = $request->boolean('aktif');
+        $data['unggulan'] = $request->boolean('unggulan');
 
         // Jika slug dikosongkan, biarkan model yang auto-generate dari judul
         if (empty($data['slug'])) {
@@ -85,6 +87,7 @@ class LinkController extends Controller
             'warna_teks' => 'required|string|max:7',
             'urutan'     => 'required|integer|min:0',
             'aktif'      => 'boolean',
+            'unggulan'   => 'boolean',
         ], [
             'judul.required' => 'Judul link wajib diisi.',
             'url.required'   => 'URL wajib diisi.',
@@ -92,7 +95,8 @@ class LinkController extends Controller
             'slug.unique'    => 'Slug sudah digunakan, coba yang lain.',
         ]);
 
-        $data['aktif'] = $request->boolean('aktif');
+        $data['aktif']    = $request->boolean('aktif');
+        $data['unggulan'] = $request->boolean('unggulan');
 
         // Jika slug dikosongkan, regenerate dari judul baru
         if (empty($data['slug'])) {
@@ -124,6 +128,16 @@ class LinkController extends Controller
         return response()->json([
             'sukses' => true,
             'aktif'  => $link->aktif,
+        ]);
+    }
+
+    // Toggle unggulan via AJAX
+    public function toggleUnggulan(Link $link)
+    {
+        $link->update(['unggulan' => !$link->unggulan]);
+        return response()->json([
+            'sukses'   => true,
+            'unggulan' => $link->unggulan,
         ]);
     }
 }
