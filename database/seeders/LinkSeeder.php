@@ -139,7 +139,7 @@ class LinkSeeder extends Seeder
                 'aktif'      => true,
             ],
 
-            // ─── Profesional (12–14) ─────────────────────────────────
+            // ─── Profesional (12–16) ────────────────────────────────
             [
                 'judul'      => 'GitHub — Rizki Habibi',
                 'slug'       => 'github',
@@ -173,8 +173,30 @@ class LinkSeeder extends Seeder
                 'urutan'     => 14,
                 'aktif'      => true,
             ],
+            [
+                'judul'      => 'Fiverr — Jasa Freelance',
+                'slug'       => 'fiverr',
+                'url'        => 'https://www.fiverr.com/rizkihub/buying?source=avatar_menu_profile',
+                'deskripsi'  => 'Pesan jasa freelance Rizki Habibi di Fiverr — web development, desain, dan project digital lainnya dengan harga terjangkau.',
+                'ikon'       => '💰',
+                'warna_bg'   => '#1DBF73',
+                'warna_teks' => '#FFFFFF',
+                'urutan'     => 15,
+                'aktif'      => true,
+            ],
+            [
+                'judul'      => 'Lazada — Profil Toko',
+                'slug'       => 'lazada-akun',
+                'url'        => 'https://member.lazada.co.id/user/profile?spm=a2o42.manage_account.0.0.545e514b0rQnW9#/profile/my',
+                'deskripsi'  => 'Kunjungi profil toko Rizki Habibi di Lazada — produk pilihan, promo menarik, dan harga terbaik.',
+                'ikon'       => '🛒',
+                'warna_bg'   => '#F57224',
+                'warna_teks' => '#FFFFFF',
+                'urutan'     => 16,
+                'aktif'      => true,
+            ],
 
-            // ─── Donasi & Support (15–16) ────────────────────────────
+            // ─── Donasi & Support (19–20) ────────────────────────────
             [
                 'judul'      => 'Trakteer — Support Rizki',
                 'slug'       => 'trakteer',
@@ -183,7 +205,7 @@ class LinkSeeder extends Seeder
                 'ikon'       => '☕',
                 'warna_bg'   => '#E53935',
                 'warna_teks' => '#FFFFFF',
-                'urutan'     => 15,
+                'urutan'     => 19,
                 'aktif'      => true,
             ],
             [
@@ -194,11 +216,11 @@ class LinkSeeder extends Seeder
                 'ikon'       => '🍵',
                 'warna_bg'   => '#FF6B35',
                 'warna_teks' => '#FFFFFF',
-                'urutan'     => 16,
+                'urutan'     => 20,
                 'aktif'      => true,
             ],
 
-            // ─── Konten & Lainnya (17–25) ────────────────────────────
+            // ─── Konten & Lainnya (21–25) ────────────────────────────
             [
                 'judul'      => 'Blog / Medium',
                 'slug'       => 'blog',
@@ -207,7 +229,7 @@ class LinkSeeder extends Seeder
                 'ikon'       => '✍️',
                 'warna_bg'   => '#00AB6C',
                 'warna_teks' => '#FFFFFF',
-                'urutan'     => 17,
+                'urutan'     => 21,
                 'aktif'      => true,
             ],
             [
@@ -218,7 +240,7 @@ class LinkSeeder extends Seeder
                 'ikon'       => '🎧',
                 'warna_bg'   => '#1DB954',
                 'warna_teks' => '#FFFFFF',
-                'urutan'     => 18,
+                'urutan'     => 22,
                 'aktif'      => true,
             ],
             [
@@ -229,7 +251,7 @@ class LinkSeeder extends Seeder
                 'ikon'       => '📧',
                 'warna_bg'   => '#EA4335',
                 'warna_teks' => '#FFFFFF',
-                'urutan'     => 19,
+                'urutan'     => 23,
                 'aktif'      => true,
             ],
 
